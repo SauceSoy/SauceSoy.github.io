@@ -11,79 +11,123 @@
     width: 100px;
     height: 100%;
 }
+h3 {
+  display: inline-block;
+  margin: 0;
+}
 </style>
 </head>
 <body>
 <div id="fish">Fish: 0</div>
-<button id="fisherman" class="button" onClick="hireFisherman()">Hire Fisherman</button>
-<Br>
-<button id="experiencedFisherman" class="button" onClick="hireExperiencedFisherman()">Hire Experienced Fisherman</button>
 </body>
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script>
 const frameRate = 100;
 
-var request = new XMLHttpRequest();
-request.open('GET', './data.json', true);
+var rawData = [
+	{
+        "Name": "Hire Fisherman",
+		"Cost": 10,
+        "Description": "These guys catch fish for you. Their cost? ",
+		"Button": null,
+		"CostMulti": 1.1,
+		"Value": 1,
+        "OnClick": function() {
+            rawData[0].Value++;
+            fish-= rawData[0].Cost;
+            rawData[0].Cost *= rawData[0].CostMulti;
+            if (!hasEnoughFish()) {
+                setDisabled(rawData[0].Button);
+            }
+        },
+        "Label": null
+	},
+    {
+        "Name": "Hire Fisherman Instructor",
+        "Cost": 0,
+        "Description": "Need more fisherman? Its your lucky day. Fisherman instructors teach young fisherman how to fish. You will need to sacrifice some adult fisherman first: ",
+        "Button": null,
+        "CostMulti": 0,
+        "Value": 0,
+        "N1Cost": 10,
+        "N1Bonus": 2,
+        "OnClick": function() {
+            N1Click(1);
+        }
+    },
+    {
+        "Name": "Hire Wise Fisherman",
+        "Description": "The wiser the better. Sacrificial amount: ",
+        "Button": null,
+        "Value": 0,
+        "N1Cost": 100,
+        "N1Bonus": 2,
+        "OnClick": function() {
+            N1Click(2);
+        }
+    },
+    {
+        "Name": "Hire Fisherboat",
+        "Description": "Creating this boat requires many wise fisherman to help build it. Cost: ",
+        "Button": null,
+        "Value": 0,
+        "N1Cost": 1000,
+        "N1Bonus": 2,
+        "OnClick": function() {
+            N1Click(3);
+        }
+    }
+]
 
-request.onload = function() {
-  if (request.status >= 200 && request.status < 400) {
-    // Success!
-    var data = JSON.parse(request.responseText);
-  } else {
-    // We reached our target server, but it returned an error
+for (let i = 0; i <rawData.length; i++) {
+    rawData[i].Button = document.createElement("button");
+    rawData[i].Label = document.createElement("h3");
+    const t = document.createTextNode(rawData[i].Name);
+    const b = document.createElement("br");
 
-  }
-};
+    rawData[i].Button.appendChild(t);
+    setDisabled(rawData[i].Button);
 
-request.onerror = function() {
-  // There was a connection error of some sort
-};
+    document.body.appendChild(rawData[i].Button);
+    document.body.appendChild(rawData[i].Label);
+    document.body.appendChild(b);
 
-request.send();
-
+    rawData[i].Button.setAttribute("class", "button");
+    rawData[i].Button.setAttribute("title", rawData[i].Description + (rawData[i].N1Cost === undefined ? rawData[i].Cost : rawData[i].N1Cost));
+    rawData[i].Button.addEventListener("click", rawData[i].OnClick);
+}
 class html {
     constructor() {
         this.fish = document.getElementById("fish");
-        this.fisherman = document.getElementById("fisherman");
-        this.experiencedFisherman = document.getElementById("experiencedFisherman");
     }
 }
-class Fish {
-    constructor() {
-        this.fish = 0;
-        this.fisherman = 1;
-        this.experiencedFisherman = 0;
-        this.fisherBoat = 0;
-        this.fisherYacht = 0;
 
-        this.fishermanCost = 10;
-
-        this.hasEnoughFish = function(){
-            return this.fish > this.fishermanCost;
-        }
-        this.addBonuses = function(){
-            this.fisherman+= this.experiencedFisherman;
-            this.fish+= frameRate / 1000 * this.fisherman;
-
-            documents.fish.innerHTML = "Fish: " + this.fish.toPrecision(4);
-        }
-    }
- }
-
-let fish = new Fish();
-
+let fish = 0;
 let documents = new html();
 
-function hireFisherman() {
-    console.log(data);
-    console.log("success");
-    fish.fisherman++;
-    fish.fish -= fish.fishermanCost;
-    fish.fishermanCost *= 1.1;
+function addBonuses(){
+    fish+= frameRate / 1000 * (rawData[0].Value + 1);
 
-    if (!fish.hasEnoughFish()) {
-        setDisabled(documents.fisherman);
+    documents.fish.innerHTML = "Fish: " + fish.toPrecision(4);
+
+    for(let i = 1; i < rawData.length; i++) {
+        rawData[i-1].Value += rawData[i].N1Bonus * rawData[i].Value * (frameRate/1000);
+    }
+}
+
+function hasEnoughFish() {
+    if (fish > rawData[0].Cost) {
+        return true;
+    }
+    return false;
+}
+
+function N1Click(n) {
+    rawData[n-1].Value -= rawData[n].N1Cost;
+    rawData[n].Value++;
+    if (rawData[n-1].Value < rawData[n].N1Cost) {
+        setDisabled(rawData[n].Button);
+        return;
     }
 }
 
@@ -96,10 +140,23 @@ function setEnabled(dom) {
     dom.style.opacity = 1;
 }
 setInterval(function() {
-    fish.addBonuses();
+    addBonuses();
 
-    if (fish.hasEnoughFish()) {
-        setEnabled(documents.fisherman);
+    if (hasEnoughFish()) {
+        setEnabled(rawData[0].Button);
+    }
+
+    rawData[0].Label.innerHTML = "You have " + Math.round(rawData[0].Value) + " " + rawData[0].Name.substr(5) + " and they make " + rawData[0].Value.toPrecision(4) + " fish per second";
+    for(let i = 1; i < rawData.length; i++) {
+        const lblName = rawData[i].Name.substr(5);
+        const n1lblName = rawData[i-1].Name.substr(5);
+        rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + ". In total they make " + (rawData[i].Value * rawData[i].N1Bonus).toPrecision(4) + " " + n1lblName + " per second";
+    }
+
+    for(let n = 1; n < rawData.length; n++) {
+        if (rawData[n-1].Value > rawData[n].N1Cost) {
+            setEnabled(rawData[n].Button);
+        }
     }
 }, frameRate)
 
