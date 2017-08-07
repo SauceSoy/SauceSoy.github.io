@@ -23,6 +23,24 @@
 <script>
 const frameRate = 100;
 
+var request = new XMLHttpRequest();
+request.open('GET', './data.json', true);
+
+request.onload = function() {
+  if (request.status >= 200 && request.status < 400) {
+    // Success!
+    var data = JSON.parse(request.responseText);
+  } else {
+    // We reached our target server, but it returned an error
+
+  }
+};
+
+request.onerror = function() {
+  // There was a connection error of some sort
+};
+
+request.send();
 
 class html {
     constructor() {
@@ -61,13 +79,6 @@ function hireFisherman() {
     fish.fisherman++;
     fish.fish -= fish.fishermanCost;
     fish.fishermanCost *= 1.1;
-    
-    console.log("help");
-    $.getJSON("./data.json", function(result){
-        $.each(result, function(i, field){
-            $("div").append(field + " ");
-        });
-    }).error(function(error){console.log(error);});
 
     if (!fish.hasEnoughFish()) {
         setDisabled(documents.fisherman);
