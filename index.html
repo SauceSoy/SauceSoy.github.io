@@ -69,7 +69,7 @@ function hireFisherman() {
         $.each(result, function(i, field){
             $("div").append(field + " ");
         });
-    });
+    }).error(function(error){console.log(error);});
 }
 
 function setDisabled(dom) {
