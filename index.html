@@ -3,7 +3,7 @@
 <head>
 <style>
 .button {
-    background-image: url("http://imgur.com/EcZji");
+    background-image: url("https://imgur.com/EcZji");
     padding: 10px;
     text-align: center;
     color: #FF0000;
@@ -76,6 +76,8 @@ let fish = new Fish();
 let documents = new html();
 
 function hireFisherman() {
+    console.log(data);
+    console.log("success");
     fish.fisherman++;
     fish.fish -= fish.fishermanCost;
     fish.fishermanCost *= 1.1;
