@@ -23,9 +23,6 @@
 <script>
 const frameRate = 100;
 
-$.getJSON("./data.json", function(json) {
-        console.log(json);
-});
 
 class html {
     constructor() {
@@ -68,6 +65,11 @@ function hireFisherman() {
     if (!fish.hasEnoughFish()) {
         setDisabled(documents.fisherman);
     }
+    $.getJSON("./data.json", function(result){
+        $.each(result, function(i, field){
+            $("div").append(field + " ");
+        });
+    });
 }
 
 function setDisabled(dom) {
