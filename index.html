@@ -1,6 +1,90 @@
 <!DOCTYPE html>
 <html>
+<head>
+<style>
+.button {
+    background-image: url("http://imgur.com/EcZji");
+    padding: 10px;
+    text-align: center;
+    color: #FF0000;
+    border-radius: 10px;
+    width: 100px;
+    height: 100%;
+}
+</style>
+</head>
 <body>
-<h1>Hello World</h1>
+<div id="fish">Fish: 0</div>
+<button id="fisherman" class="button" onClick="hireFisherman()">Hire Fisherman</button>
+<Br>
+<button id="experiencedFisherman" class="button" onClick="hireExperiencedFisherman()">Hire Experienced Fisherman</button>
 </body>
-</html>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script>
+const frameRate = 100;
+
+
+class html {
+    constructor() {
+        this.fish = document.getElementById("fish");
+        this.fisherman = document.getElementById("fisherman");
+        this.experiencedFisherman = document.getElementById("experiencedFisherman");
+    }
+}
+class Fish {
+    constructor() {
+        this.fish = 0;
+        this.fisherman = 1;
+        this.experiencedFisherman = 0;
+        this.fisherBoat = 0;
+        this.fisherYacht = 0;
+
+        this.fishermanCost = 10;
+
+        this.hasEnoughFish = function(){
+            return this.fish > this.fishermanCost;
+        }
+        this.addBonuses = function(){
+            this.fisherman+= this.experiencedFisherman;
+            this.fish+= frameRate / 1000 * this.fisherman;
+
+            documents.fish.innerHTML = "Fish: " + this.fish.toPrecision(4);
+        }
+    }
+ }
+
+let fish = new Fish();
+
+let documents = new html();
+
+function hireFisherman() {
+    fish.fisherman++;
+    fish.fish -= fish.fishermanCost;
+    fish.fishermanCost *= 1.1;
+    
+    if (!fish.hasEnoughFish()) {
+        setDisabled(documents.fisherman);
+    }
+    $.getJSON("data.json", function(json) {
+        console.log(json);
+});
+}
+
+function setDisabled(dom) {
+    dom.setAttribute("disabled", "true");
+    dom.style.opacity = 0.6;
+}
+function setEnabled(dom) {
+    dom.removeAttribute("disabled");
+    dom.style.opacity = 1;
+}
+setInterval(function() {
+    fish.addBonuses();
+
+    if (fish.hasEnoughFish()) {
+        setEnabled(documents.fisherman);
+    }
+}, frameRate)
+
+</script>
+</html> 

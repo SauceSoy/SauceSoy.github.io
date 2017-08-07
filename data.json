@@ -1,0 +1,8 @@
+{
+	"Fisherman": {
+		"Cost": 10,
+		"Button": undefined,
+		"CostMulti": 1.1,
+		"Value": 1
+	}
+}	
