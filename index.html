@@ -62,14 +62,16 @@ function hireFisherman() {
     fish.fish -= fish.fishermanCost;
     fish.fishermanCost *= 1.1;
     
-    if (!fish.hasEnoughFish()) {
-        setDisabled(documents.fisherman);
-    }
+    console.log("help");
     $.getJSON("./data.json", function(result){
         $.each(result, function(i, field){
             $("div").append(field + " ");
         });
     }).error(function(error){console.log(error);});
+
+    if (!fish.hasEnoughFish()) {
+        setDisabled(documents.fisherman);
+    }
 }
 
 function setDisabled(dom) {
