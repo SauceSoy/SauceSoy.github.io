@@ -96,6 +96,7 @@ for (let i = 0; i <rawData.length; i++) {
     rawData[i].Button.setAttribute("title", rawData[i].Description + (rawData[i].N1Cost === undefined ? rawData[i].Cost : rawData[i].N1Cost));
     rawData[i].Button.addEventListener("click", rawData[i].OnClick);
 }
+
 class html {
     constructor() {
         this.fish = document.getElementById("fish");
@@ -104,6 +105,27 @@ class html {
 
 let fish = 0;
 let documents = new html();
+
+const impButton = document.createElement("button");
+const impText = document.createTextNode("Import");
+
+const expButton = document.createElement("button");
+const expText = document.createTextNode("Export");
+
+const txtBox = document.createElement("textarea");
+
+impButton.appendChild(impText);
+expButton.appendChild(expText);
+
+impButton.setAttribute("class", "button");
+expButton.setAttribute("class", "button");
+
+impButton.addEventListener("click", importSave);
+expButton.addEventListener("click", exportSave);
+
+document.body.appendChild(impButton);
+document.body.appendChild(expButton);
+document.body.appendChild(txtBox);
 
 function addBonuses(){
     fish+= frameRate / 1000 * (rawData[0].Value + 1);
@@ -150,15 +172,46 @@ setInterval(function() {
     for(let i = 1; i < rawData.length; i++) {
         const lblName = rawData[i].Name.substr(5);
         const n1lblName = rawData[i-1].Name.substr(5);
-        rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + ". In total they make " + (rawData[i].Value * rawData[i].N1Bonus).toPrecision(4) + " " + n1lblName + " per second";
+        const perSecAmo = (rawData[i].Value * rawData[i].N1Bonus).toPrecision(4);
+        rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + (rawData[i].Value === 1 ? "s" : "")+ ". In total they make " + perSecAmo + " " + n1lblName + (perSecAmo === 1 ? "s" : "") + " per second";
     }
 
     for(let n = 1; n < rawData.length; n++) {
-        if (rawData[n-1].Value > rawData[n].N1Cost) {
+        if (rawData[n-1].Value >= rawData[n].N1Cost) {
             setEnabled(rawData[n].Button);
         }
     }
 }, frameRate)
+
+function importSave() {
+    try {
+    const dec = atob(txtBox.value);
+    const json = JSON.parse(dec);
+
+    for (let i = 0; i < json.length-1; i++) {
+        rawData[i].Value = json[i].Value;
+    }
+    fish = json[json.length-1];
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+function exportSave() {
+    let save = [];
+    for(let i = 0; i < rawData.length; i++) {
+        if (save[i] === undefined) {
+            save[i] = {};
+        }
+        save[i].Value = rawData[i].Value;
+    }
+    save.push(fish);
+
+    let stringified = JSON.stringify(save);
+    const enc = btoa(stringified);
+
+    txtBox.value = enc;
+}
 
 </script>
 </html> 
