@@ -173,7 +173,7 @@ setInterval(function() {
         const lblName = rawData[i].Name.substr(5);
         const n1lblName = rawData[i-1].Name.substr(5);
         const perSecAmo = (rawData[i].Value * rawData[i].N1Bonus).toPrecision(4);
-        rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + (rawData[i].Value === 1 ? "s" : "")+ ". In total they make " + perSecAmo + " " + n1lblName + (perSecAmo === 1 ? "s" : "") + " per second";
+        rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + (rawData[i].Value !== 1 ? "s" : "")+ ". In total they make " + perSecAmo + " " + n1lblName + (perSecAmo !== 1 ? "s" : "") + " per second";
     }
 
     for(let n = 1; n < rawData.length; n++) {
