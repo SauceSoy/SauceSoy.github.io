@@ -112,7 +112,7 @@ for (let i = 0; i <rawData.length; i++) {
 let fish = 0;
 let fishLbl = document.getElementById("fish");
 
-let keysPressed = { shiftPressed: false, zPressed: false, qPressed: false};
+let keysPressed = { shiftPressed: false, zPressed: false, qPressed: false, ctrlPressed: false};
 
 const impButton = document.createElement("button");
 const impText = document.createTextNode("Import");
@@ -169,6 +169,12 @@ function N1Click(n) {
         rawData[n].Value+= 100;
         return;
     }
+    else if (keysPressed.ctrlPressed === true) {
+        const maxCanBuy = Math.floor(rawData[n-1].Value / rawData[n].N1Cost);
+
+        rawData[n-1].Value -= rawData[n].N1Cost * maxCanBuy;
+        rawData[n].Value += maxCanBuy;
+    }
 
     rawData[n-1].Value -= rawData[n].N1Cost;
     rawData[n].Value++;
@@ -197,6 +203,9 @@ $(window).keydown(function(evt) {
     else if (evt.keyCode === 90) {
         keysPressed.zPressed = true;
     }
+    else if (evt.keyCode === 17) {
+        keysPressed.ctrlPressed = true;
+    }
 }).keyup(function(evt){
     if (evt.keyCode === 16) {
         keysPressed.shiftPressed = false;
@@ -206,6 +215,9 @@ $(window).keydown(function(evt) {
     }
     else if (evt.keyCode === 90) {
         keysPressed.zPressed = false;
+    }
+    else if (evt.keyCode === 17) {
+        keysPressed.ctrlPressed = false;
     }
 });
 
