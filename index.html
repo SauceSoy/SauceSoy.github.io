@@ -141,7 +141,7 @@ function hasEnoughFish() {
 }
 
 function N1Click(n) {
-    if (shiftPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 25) {
+    if (keysPressed.shiftPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 25) {
         rawData[n-1].Value -= rawData[n].N1Cost * 25;
         rawData[n].Value+= 25;
     }
