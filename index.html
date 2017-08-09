@@ -26,9 +26,9 @@ const frameRate = 100;
 
 var rawData = [
 	{
-        "Name": "Hire Fisherman",
+        "Name": "Hire Fisher Dad",
 		"Cost": 10,
-        "Description": "These guys catch fish for you. Their cost? ",
+        "Description": "Unfortunately dad jokes aren't avoidable. :( Their cost? ",
 		"Button": null,
 		"CostMulti": 1.1,
 		"Value": 1,
@@ -39,11 +39,12 @@ var rawData = [
             if (!hasEnoughFish()) {
                 setDisabled(rawData[0].Button);
             }
+            rawData[0].Button.title = rawData[0].Description + rawData[0].Cost;
         },
         "Label": null
 	},
     {
-        "Name": "Hire Fisherman Instructor",
+        "Name": "Hire Fisher Dad Instructor",
         "Cost": 0,
         "Description": "Need more fisherman? Its your lucky day. Fisherman instructors teach young fisherman how to fish. You will need to sacrifice some adult fisherman first: ",
         "Button": null,
@@ -56,7 +57,7 @@ var rawData = [
         }
     },
     {
-        "Name": "Hire Wise Fisherman",
+        "Name": "Hire Wise Fisher Dad",
         "Description": "The wiser the better. Sacrificial amount: ",
         "Button": null,
         "Value": 0,
@@ -67,16 +68,27 @@ var rawData = [
         }
     },
     {
-        "Name": "Hire Fisherboat",
-        "Description": "Creating this boat requires many wise fisherman to help build it. Cost: ",
+        "Name": "Hire Fishing boat",
+        "Description": "Creating this boat requires many wise Fisher Dads to help build it. Cost: ",
         "Button": null,
         "Value": 0,
         "N1Cost": 1000,
+        "N1Bonus": 3,
+        "OnClick": function() {
+            N1Click(3);
+        }
+    },
+    {
+        "Name": "Hire Fishing Government",
+        "Description": "The Fishing Government deems you worthy of leading it. But it will be costly. Cost: ",
+        "Button": null,
+        "Value": 0,
+        "N1Cost": 5000,
         "N1Bonus": 2,
         "OnClick": function() {
             N1Click(3);
         }
-    }
+    }    
 ]
 
 for (let i = 0; i <rawData.length; i++) {
@@ -144,14 +156,17 @@ function N1Click(n) {
     if (keysPressed.shiftPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 25) {
         rawData[n-1].Value -= rawData[n].N1Cost * 25;
         rawData[n].Value+= 25;
+        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 25;
     }
     else if (keysPressed.qPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 1000) {
         rawData[n-1].Value -= rawData[n].N1Cost * 1000;
         rawData[n].Value+= 1000;
+        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 1000;
     }
     else if (keysPressed.zPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 100) {
         rawData[n-1].Value -= rawData[n].N1Cost * 100;
         rawData[n].Value+= 100;
+        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 100;
     }
 
     rawData[n-1].Value -= rawData[n].N1Cost;
@@ -183,7 +198,7 @@ $(window).keydown(function(evt) {
     }
 }).keyup(function(evt){
     if (evt.keyCode === 16) {
-        shiftPressed = false;
+        keysPressed.shiftPressed = false;
     }
     else if (evt.keyCode === 81) {
         keysPressed.qPressed = false;
@@ -206,13 +221,12 @@ setInterval(function() {
         const n1lblName = rawData[i-1].Name.substr(5);
         const perSecAmo = (rawData[i].Value * rawData[i].N1Bonus).toPrecision(4);
         rawData[i].Label.innerHTML = "You have " + Math.round(rawData[i].Value) + " " + lblName + (rawData[i].Value !== 1 ? "s" : "")+ ". In total they make " + perSecAmo + " " + n1lblName + (perSecAmo !== 1 ? "s" : "") + " per second";
-    }
-
-    for(let n = 1; n < rawData.length; n++) {
-        if (rawData[n-1].Value >= rawData[n].N1Cost) {
-            setEnabled(rawData[n].Button);
+                
+        if (rawData[i-1].Value >= rawData[i].N1Cost) {
+            setEnabled(rawData[i].Button);
         }
     }
+    
 }, frameRate)
 
 window.onload = function() {
