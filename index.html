@@ -39,7 +39,7 @@ var rawData = [
             if (!hasEnoughFish()) {
                 setDisabled(rawData[0].Button);
             }
-            rawData[0].Button.title = rawData[0].Description + rawData[0].Cost;
+            rawData[0].Button.title = rawData[0].Description + rawData[0].Cost.toPrecision(4);
         },
         "Label": null
 	},
@@ -215,7 +215,8 @@ setInterval(function() {
         setEnabled(rawData[0].Button);
     }
 
-    rawData[0].Label.innerHTML = "You have " + Math.round(rawData[0].Value) + " " + rawData[0].Name.substr(5) + " and they make " + rawData[0].Value.toPrecision(4) + " fish per second";
+    const firstS = rawData[0].Value === 1;
+    rawData[0].Label.innerHTML = "You have " + Math.round(rawData[0].Value) + " " + rawData[0].Name.substr(5) + (firstS === true ? "s" : "") + " and they make " + rawData[0].Value.toPrecision(4) + " fish per second";
     for(let i = 1; i < rawData.length; i++) {
         const lblName = rawData[i].Name.substr(5);
         const n1lblName = rawData[i-1].Name.substr(5);
