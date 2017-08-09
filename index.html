@@ -97,14 +97,10 @@ for (let i = 0; i <rawData.length; i++) {
     rawData[i].Button.addEventListener("click", rawData[i].OnClick);
 }
 
-class html {
-    constructor() {
-        this.fish = document.getElementById("fish");
-    }
-}
-
 let fish = 0;
-let documents = new html();
+let fishLbl = document.getElementById("fish");
+
+let keysPressed = { shiftPressed: false, zPressed: false, qPressed: false};
 
 const impButton = document.createElement("button");
 const impText = document.createTextNode("Import");
@@ -130,7 +126,7 @@ document.body.appendChild(txtBox);
 function addBonuses(){
     fish+= frameRate / 1000 * (rawData[0].Value + 1);
 
-    documents.fish.innerHTML = "Fish: " + fish.toPrecision(4);
+    fishLbl.innerHTML = "Fish: " + fish.toPrecision(4);
 
     for(let i = 1; i < rawData.length; i++) {
         rawData[i-1].Value += rawData[i].N1Bonus * rawData[i].Value * (frameRate/1000);
@@ -145,6 +141,19 @@ function hasEnoughFish() {
 }
 
 function N1Click(n) {
+    if (shiftPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 25) {
+        rawData[n-1].Value -= rawData[n].N1Cost * 25;
+        rawData[n].Value+= 25;
+    }
+    else if (keysPressed.qPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 1000) {
+        rawData[n-1].Value -= rawData[n].N1Cost * 1000;
+        rawData[n].Value+= 1000;
+    }
+    else if (keysPressed.zPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 100) {
+        rawData[n-1].Value -= rawData[n].N1Cost * 100;
+        rawData[n].Value+= 100;
+    }
+
     rawData[n-1].Value -= rawData[n].N1Cost;
     rawData[n].Value++;
     if (rawData[n-1].Value < rawData[n].N1Cost) {
@@ -161,6 +170,29 @@ function setEnabled(dom) {
     dom.removeAttribute("disabled");
     dom.style.opacity = 1;
 }
+
+$(window).keydown(function(evt) {
+    if (evt.keyCode === 16) {
+        keysPressed.shiftPressed = true;
+    }
+    else if (evt.keyCode === 81) {
+        keysPressed.qPressed = true;
+    }
+    else if (evt.keyCode === 90) {
+        keysPressed.zPressed = true;
+    }
+}).keyup(function(evt){
+    if (evt.keyCode === 16) {
+        shiftPressed = false;
+    }
+    else if (evt.keyCode === 81) {
+        keysPressed.qPressed = false;
+    }
+    else if (evt.keyCode === 90) {
+        keysPressed.zPressed = false;
+    }
+});
+
 setInterval(function() {
     addBonuses();
 
@@ -183,6 +215,9 @@ setInterval(function() {
     }
 }, frameRate)
 
+window.onload = function() {
+    alert("Welcome to Orange Fish Clicker! Press z to buy in multiples of 100, press q to buy in multiples of 1000, and press shift to buy in multiples of 25.");
+}
 function importSave() {
     try {
     const dec = atob(txtBox.value);
