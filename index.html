@@ -156,19 +156,17 @@ function N1Click(n) {
     if (keysPressed.shiftPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 25) {
         rawData[n-1].Value -= rawData[n].N1Cost * 25;
         rawData[n].Value+= 25;
-        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 25;
         return;
     }
     else if (keysPressed.qPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 1000) {
+        console.log(rawData[n].N1Cost * 1000);
         rawData[n-1].Value -= rawData[n].N1Cost * 1000;
         rawData[n].Value+= 1000;
-        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 1000;
         return;
     }
     else if (keysPressed.zPressed === true && rawData[n-1].Value > rawData[n].N1Cost * 100) {
         rawData[n-1].Value -= rawData[n].N1Cost * 100;
         rawData[n].Value+= 100;
-        rawData[n].Button.title = rawData[n].Description + rawData[n].N1Cost * 100;
         return;
     }
 
